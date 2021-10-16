@@ -2,18 +2,34 @@ defmodule HelloWeb.PageController do
   import Hello, only: [consulta_cep: 1]
   use HelloWeb, :controller
 
-  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
   def index(conn, _params) do
     render(conn, "index.html")
   end
 
-  @spec test(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def test(conn, params) do
-    json(conn, params)
-  end
-
   def api(conn, params) do
     %{"cep" => valor} = params
-    json(conn, Jason.decode!(~s(#{consulta_cep(valor).body})))
+    result = Jason.decode!(consulta_cep(valor).body)
+
+    %{
+      "bairro" => bairro,
+      "cep" => cep,
+      "ddd" => ddd,
+      "localidade" => cidade,
+      "uf" => estado,
+      "logradouro" => rua
+    } = result
+
+    render(conn, "api.html",
+      bairro: bairro,
+      cep: cep,
+      ddd: ddd,
+      cidade: cidade,
+      estado: estado,
+      rua: rua
+    )
+  end
+
+  def title(conn, _params) do
+    render(conn, "title.html")
   end
 end

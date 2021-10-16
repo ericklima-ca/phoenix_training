@@ -11,7 +11,7 @@ defmodule HelloWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "html"]
   end
 
   scope "/", HelloWeb do
@@ -55,13 +55,9 @@ defmodule HelloWeb.Router do
     end
   end
 
-  scope "/", HelloWeb do
-    pipe_through :api
-    get("/test/:id/action/:action", PageController, :test)
-  end
-
   scope "/api", HelloWeb do
-    pipe_through :api
+    pipe_through :browser
+    get "/", PageController, :title
     get "/:cep", PageController, :api
   end
 end
